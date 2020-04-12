@@ -1,0 +1,24 @@
+<html>
+<head>
+  <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+<body>
+<h1>Just &lt;&lt;GO FOR IT&gt;&gt;</h1>
+
+<h3>Register</h3>
+<div class="form-container">
+  <form method="post" action="/signup" enctype="multipart/form-data">
+    Email: <input class="form-element" type="text" name="email"/>
+    Password: <input class="form-element" type="password" name="password"/>{{/* TODO: confirm password */}}
+    Name: <input class="form-element" type="text" name="name"/>
+    Contact: <input class="form-element" type="text" name="mobile"/>
+
+    <input type="submit">
+  </form>
+
+</div>
+{{.}}
+<br>
+<a href="/">Back to login</a>
+</body>
+</html>

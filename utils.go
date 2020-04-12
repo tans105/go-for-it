@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -24,7 +23,7 @@ func validatePayload(u User, isLogin bool) string {
 	if !isLogin && isNullOrEmpty(u.name) {
 		message += NAME_NOT_FOUND + SEPARATOR
 	}
-	fmt.Println("Length", len(message))
+	
 	return message
 }
 

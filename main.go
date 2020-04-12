@@ -19,10 +19,12 @@ type User struct {
 }
 
 func init() {
-	tpl = template.Must(template.ParseGlob("templates/*gohtml"))
+	tpl = template.Must(template.ParseGlob("public/templates/*html"))
 }
 
 func main() {
+	fs := http.FileServer(http.Dir("public/stylesheets"))
+	http.Handle("/stylesheets/", http.StripPrefix("/stylesheets/", fs))
 	http.HandleFunc("/", login)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/signup", signup)
@@ -62,7 +64,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	tpl.ExecuteTemplate(w, "index.gohtml", message)
+	tpl.ExecuteTemplate(w, "index.html", message)
 }
 
 func signup(w http.ResponseWriter, req *http.Request) {
@@ -91,11 +93,11 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	tpl.ExecuteTemplate(w, "signup.gohtml", message)
+	tpl.ExecuteTemplate(w, "signup.html", message)
 }
 
 func home(w http.ResponseWriter, req *http.Request) {
-	tpl.ExecuteTemplate(w, "home.gohtml", nil)
+	tpl.ExecuteTemplate(w, "home.html", nil)
 }
 
 func logout(w http.ResponseWriter, req *http.Request) {

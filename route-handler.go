@@ -36,6 +36,10 @@ func login(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	if req.FormValue("status") == "1" {
+		message = SUCCESSFULL_REGISTRATION
+	}
+	
 	tpl.ExecuteTemplate(w, "index.html", message)
 }
 
@@ -58,15 +62,18 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			if len(message) == 0 {
 				dbUsers[u.email] = u
 				message = SUCCESSFULL_REGISTRATION
+				http.Redirect(w, req, "/login?status=1", http.StatusSeeOther)
 			} else {
 				message = COULD_NOT_REGISTER + ":" + message
+				tpl.ExecuteTemplate(w, "signup.html", message)
 			}
 		} else {
 			message = EMAIL_ALREADY_TAKEN
+			tpl.ExecuteTemplate(w, "signup.html", message)
 		}
+	} else {
+		tpl.ExecuteTemplate(w, "signup.html", message)
 	}
-
-	tpl.ExecuteTemplate(w, "signup.html", message)
 }
 
 func home(w http.ResponseWriter, req *http.Request) {

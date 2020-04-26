@@ -1,21 +1,31 @@
 <html>
 <head>
-  <link rel="stylesheet" href="stylesheets/style.css">
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/custom.css" rel="stylesheet">
 </head>
 <body>
-<h1>Just &lt;&lt;GO FOR IT&gt;&gt;</h1>
 
-
-<h3>Login</h3>
-<div class="form-container">
-  <form method="post" enctype="multipart/form-data">
-    <input class="form-element" type="text" name="email"/>
-    <input class="form-element" type="password" name="password"/>
-    <input class="form-element" type="submit">
-  </form>
-
+<div class="pb-2 mt-4 mb-2 border-bottom">
+  <h2>Just <span style="color: deeppink">&lt;&lt;GO&gt;&gt;</span> FOR IT</h2>
 </div>
 
-<a href="/signup">Signup</a>
+<div class="container">
+  <form method="post" action="/login" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <input type="text" class="form-control" name= "email" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="/signup">Signup</a>
+  </form>
+</div>
+
+
+<script src="assets/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,38 +1,10 @@
 package main
 
 import (
-	"html/template"
 	"math/rand"
 	"net/http"
 	"strconv"
 )
-
-var tpl *template.Template
-var dbSessions = map[string]string{}
-var dbUsers = map[string]User{}
-
-type User struct {
-	email    string
-	password string
-	name     string
-	mobile   string
-}
-
-func init() {
-	tpl = template.Must(template.ParseGlob("public/templates/*html"))
-}
-
-func main() {
-	fs := http.FileServer(http.Dir("public/stylesheets"))
-	http.Handle("/stylesheets/", http.StripPrefix("/stylesheets/", fs))
-	http.HandleFunc("/", login)
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/signup", signup)
-	http.HandleFunc("/home", home)
-	http.HandleFunc("/logout", logout)
-
-	http.ListenAndServe(PORT, nil)
-}
 
 func login(w http.ResponseWriter, req *http.Request) {
 	var message string
@@ -66,6 +38,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 	tpl.ExecuteTemplate(w, "index.html", message)
 }
+
 
 func signup(w http.ResponseWriter, req *http.Request) {
 	if alreadyLoggedIn(req) {
@@ -115,6 +88,6 @@ func logout(w http.ResponseWriter, req *http.Request) {
 		MaxAge: -1,
 	}
 	http.SetCookie(w, c)
-
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
+

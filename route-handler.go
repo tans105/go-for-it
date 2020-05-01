@@ -8,11 +8,11 @@ import (
 
 func login(w http.ResponseWriter, req *http.Request) {
 	var message string
+	pass := true
 	if alreadyLoggedIn(req) {
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
 	} else {
 		if req.Method == http.MethodPost {
-			pass := true
 			u := User{
 				email:    req.FormValue("email"),
 				password: req.FormValue("password"),
@@ -36,19 +36,15 @@ func login(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if req.FormValue("status") == "1" {
-		message = SUCCESSFULL_REGISTRATION
-	}
-	
-	tpl.ExecuteTemplate(w, "index.html", message)
+	tpl.ExecuteTemplate(w, "index.html", Response{pass, message})
 }
-
 
 func signup(w http.ResponseWriter, req *http.Request) {
 	if alreadyLoggedIn(req) {
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
 	}
 
+	var pass bool
 	var message string
 	if req.Method == http.MethodPost {
 		u := User{
@@ -61,19 +57,19 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			message = validatePayload(u, false)
 			if len(message) == 0 {
 				dbUsers[u.email] = u
+				pass = true
 				message = SUCCESSFULL_REGISTRATION
-				http.Redirect(w, req, "/login?status=1", http.StatusSeeOther)
 			} else {
+				pass = false
 				message = COULD_NOT_REGISTER + ":" + message
-				tpl.ExecuteTemplate(w, "signup.html", message)
 			}
 		} else {
+			pass = false
 			message = EMAIL_ALREADY_TAKEN
-			tpl.ExecuteTemplate(w, "signup.html", message)
 		}
-	} else {
-		tpl.ExecuteTemplate(w, "signup.html", message)
 	}
+
+	tpl.ExecuteTemplate(w, "signup.html", Response{pass, message})
 }
 
 func home(w http.ResponseWriter, req *http.Request) {
@@ -97,4 +93,3 @@ func logout(w http.ResponseWriter, req *http.Request) {
 	http.SetCookie(w, c)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
-

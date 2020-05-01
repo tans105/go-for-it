@@ -6,8 +6,6 @@ import (
 )
 
 var tpl *template.Template
-var dbSessions = map[string]string{}
-var dbUsers = map[string]User{}
 
 func init() {
 	tpl = template.Must(template.ParseGlob("public/templates/*html"))

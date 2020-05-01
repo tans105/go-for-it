@@ -9,13 +9,14 @@ type Response struct {
 
 type User struct {
 	gorm.Model
-	Email    string
-	Password string
+	Email    string `gorm:"unique;not null"`
+	Password string `gorm:"not null"`
 	Name     string
 	Mobile   string
 }
 
 type Session struct {
 	gorm.Model
-	SessionId string
+	Email     string `gorm:"unique;not null"`
+	SessionId string `gorm:"unique;not null"`
 }

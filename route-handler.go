@@ -19,8 +19,12 @@ func login(w http.ResponseWriter, req *http.Request) {
 			}
 
 			message = validatePayload(u, true)
-			if len(message) > 0 || !isValidLogin(u) {
+
+			if len(message) > 0 {
 				pass = false
+			} else if !isValidLogin(u) {
+				pass = false
+				message = INVALID_CREDENTIALS
 			}
 
 			if pass {
@@ -30,7 +34,12 @@ func login(w http.ResponseWriter, req *http.Request) {
 					Name:  "uuid",
 					Value: uuid,
 				})
-				dbSessions[uuid] = u.Email
+
+				db.Debug().Delete(Session{}, "email = ?", u.Email)
+				db.Create(&Session{
+					Email:     u.Email,
+					SessionId: uuid,
+				})
 				http.Redirect(w, req, "/home", http.StatusSeeOther)
 			}
 		}
@@ -53,20 +62,22 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			Name:     req.FormValue("name"),
 			Mobile:   req.FormValue("mobile"),
 		}
-		if !isUserExists(u) {
-			message = validatePayload(u, false)
-			if len(message) == 0 {
-				dbUsers[u.Email] = u
-				//TODO: insert user into db
+
+		message = validatePayload(u, false)
+
+		if len(message) == 0 { // request has all the necessary data
+			rowsAffected := db.Create(&u).RowsAffected
+
+			if rowsAffected > 0 { // if insert is successful
 				pass = true
 				message = SUCCESSFULL_REGISTRATION
-			} else {
+			} else { // email already present
 				pass = false
-				message = COULD_NOT_REGISTER + ":" + message
+				message = EMAIL_ALREADY_TAKEN
 			}
 		} else {
 			pass = false
-			message = EMAIL_ALREADY_TAKEN
+			message = COULD_NOT_REGISTER + ":" + message
 		}
 	}
 
@@ -83,14 +94,14 @@ func logout(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	c, _ := req.Cookie("uuid")
-	// delete the session
-	delete(dbSessions, c.Value)
-	// remove the cookie
-	c = &http.Cookie{
+
+	c = &http.Cookie{ // remove the cookie
 		Name:   "uuid",
 		Value:  "",
 		MaxAge: -1,
 	}
+
+	db.Debug().Unscoped().Where("session_id = ?", c.Value).Delete(&Session{})
 	http.SetCookie(w, c)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }

@@ -9,15 +9,9 @@ var tpl *template.Template
 var dbSessions = map[string]string{}
 var dbUsers = map[string]User{}
 
-type User struct {
-	email    string
-	password string
-	name     string
-	mobile   string
-}
-
 func init() {
 	tpl = template.Must(template.ParseGlob("public/templates/*html"))
+	initDb()
 }
 
 func main() {

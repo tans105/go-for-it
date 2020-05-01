@@ -6,21 +6,21 @@ import (
 )
 
 func isUserExists(u User) bool {
-	_, present := dbUsers[u.email]
+	_, present := dbUsers[u.Email]
 	return present
 }
 
 func validatePayload(u User, isLogin bool) string {
 	var message string
-	if isNullOrEmpty(u.email) {
+	if isNullOrEmpty(u.Email) {
 		message = EMAIL_NOT_FOUND + SEPARATOR
 	}
 
-	if isNullOrEmpty(u.password) {
+	if isNullOrEmpty(u.Password) {
 		message += PASSWORD_NOT_FOUND + SEPARATOR
 	}
 
-	if !isLogin && isNullOrEmpty(u.name) {
+	if !isLogin && isNullOrEmpty(u.Name) {
 		message += NAME_NOT_FOUND + SEPARATOR
 	}
 	
@@ -44,8 +44,8 @@ func alreadyLoggedIn(req *http.Request) bool {
 func isValidLogin(u User) bool {
 	//TODO: Store encrypted password and compare with the same
 	if isUserExists(u) {
-		dbPass := dbUsers[u.email].password
-		return dbPass == u.password
+		dbPass := dbUsers[u.Email].Password
+		return dbPass == u.Password
 	} else {
 		return false
 	}

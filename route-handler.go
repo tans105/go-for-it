@@ -14,8 +14,8 @@ func login(w http.ResponseWriter, req *http.Request) {
 	} else {
 		if req.Method == http.MethodPost {
 			u := User{
-				email:    req.FormValue("email"),
-				password: req.FormValue("password"),
+				Email:    req.FormValue("email"),
+				Password: req.FormValue("password"),
 			}
 
 			message = validatePayload(u, true)
@@ -30,7 +30,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 					Name:  "uuid",
 					Value: uuid,
 				})
-				dbSessions[uuid] = u.email
+				dbSessions[uuid] = u.Email
 				http.Redirect(w, req, "/home", http.StatusSeeOther)
 			}
 		}
@@ -48,15 +48,16 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	var message string
 	if req.Method == http.MethodPost {
 		u := User{
-			email:    req.FormValue("email"),
-			password: req.FormValue("password"),
-			name:     req.FormValue("name"),
-			mobile:   req.FormValue("mobile"),
+			Email:    req.FormValue("email"),
+			Password: req.FormValue("password"),
+			Name:     req.FormValue("name"),
+			Mobile:   req.FormValue("mobile"),
 		}
 		if !isUserExists(u) {
 			message = validatePayload(u, false)
 			if len(message) == 0 {
-				dbUsers[u.email] = u
+				dbUsers[u.Email] = u
+				//TODO: insert user into db
 				pass = true
 				message = SUCCESSFULL_REGISTRATION
 			} else {

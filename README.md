@@ -17,7 +17,7 @@ Simple web-application with Sign-up, Sign In implementation using session, cooki
 ### Pre-requisite
 - PostgreSQL setup on the machine (https://www.postgresql.org/download/)
 
-###Features 
+### Features 
 [v1.0](https://github.com/tans105/go-for-it/releases/tag/v1.0 "Named link title")
 
 - Sign up page ( with basic server-side validations )

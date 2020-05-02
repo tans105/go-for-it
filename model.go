@@ -2,6 +2,14 @@ package main
 
 import "github.com/jinzhu/gorm"
 
+type DbConfiguration struct {
+	Vendor string
+	Host string
+	Port int
+	Username string
+	Password string
+}
+
 type Response struct {
 	Success bool
 	Message string

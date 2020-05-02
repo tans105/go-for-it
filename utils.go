@@ -1,6 +1,7 @@
 package main
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
 )
@@ -55,8 +56,11 @@ func isValidLogin(u User) bool {
 	dbUser := isUserExists(u)
 
 	if (User{}) != dbUser {
-		dbPass := dbUser.Password
-		return dbPass == u.Password
+		err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(u.Password))
+		if err != nil {
+			return false
+		}
+		return true
 	} else {
 		return false
 	}

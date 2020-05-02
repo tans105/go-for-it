@@ -1,9 +1,10 @@
 package main
 
 import (
-	"math/rand"
+	"github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
+	"log"
 	"net/http"
-	"strconv"
 )
 
 func login(w http.ResponseWriter, req *http.Request) {
@@ -29,23 +30,23 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 			if pass {
 				//create session
-				uuid := strconv.Itoa(int(rand.Float64()*2089)) + "-" + strconv.Itoa(int(rand.Float64()*9973)) //TODO: Add package to generate session ID
+				sessionId, _ := uuid.NewV4()
 				http.SetCookie(w, &http.Cookie{
 					Name:  "uuid",
-					Value: uuid,
+					Value: sessionId.String(),
 				})
 
 				db.Debug().Delete(Session{}, "email = ?", u.Email)
 				db.Create(&Session{
 					Email:     u.Email,
-					SessionId: uuid,
+					SessionId: sessionId.String(),
 				})
 				http.Redirect(w, req, "/home", http.StatusSeeOther)
 			}
 		}
 	}
 
-	tpl.ExecuteTemplate(w, "index.html", Response{pass, message})
+	_ = tpl.ExecuteTemplate(w, "index.html", Response{pass, message})
 }
 
 func signup(w http.ResponseWriter, req *http.Request) {
@@ -66,6 +67,11 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		message = validatePayload(u, false)
 
 		if len(message) == 0 { // request has all the necessary data
+			bs, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.MinCost)
+			if err != nil {
+				log.Fatalln("Unable to encrypt password! ")
+			}
+			u.Password = string(bs)
 			rowsAffected := db.Create(&u).RowsAffected
 
 			if rowsAffected > 0 { // if insert is successful
@@ -81,11 +87,11 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	tpl.ExecuteTemplate(w, "signup.html", Response{pass, message})
+	_ = tpl.ExecuteTemplate(w, "signup.html", Response{pass, message})
 }
 
 func home(w http.ResponseWriter, req *http.Request) {
-	tpl.ExecuteTemplate(w, "home.html", nil)
+	_ = tpl.ExecuteTemplate(w, "home.html", nil)
 }
 
 func logout(w http.ResponseWriter, req *http.Request) {

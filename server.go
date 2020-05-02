@@ -21,5 +21,5 @@ func main() {
 	http.HandleFunc("/home", home)
 	http.HandleFunc("/logout", logout)
 
-	http.ListenAndServe(PORT, nil)
+	_ = http.ListenAndServe(PORT, nil)
 }
